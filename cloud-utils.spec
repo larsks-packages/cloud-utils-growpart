@@ -1,16 +1,20 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	0.2.bzr216%{?dist}
+Release:	1%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
-URL:		https://launchpad.net/cloud-utils
+URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
 
-# bzr export -r 216 cloud-utils-0.27-bzr216.tar.gz lp:cloud-utils
-Source0:	%{name}-%{version}-bzr216.tar.gz
+Source0:	%{name}-%{version}.tar.gz
 Source1:        LICENSE
 
 BuildArch:	noarch
+
+%if 0%{?rhel}
+# Only build on x86_64 for EPEL because qemu-img only exists for that arch
+ExclusiveArch:	x86_64
+%endif
 
 Requires:	gawk
 Requires:	gdisk
@@ -35,7 +39,7 @@ with a much simpler interface.
 
 
 %prep
-%setup -q -n %{name}-%{version}-bzr216
+%setup -q
 
 
 %build
@@ -62,7 +66,11 @@ cp man/* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 
 %changelog
-* Tue Feb 12 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-0.2.bzr216
+* Tue Apr  2 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-1
+- Update to upstream release 0.27.
+- Fix spec file to only build on x86_64 for EPEL.
+
+* Wed Feb 12 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-0.2.bzr216
 - Add GPL-3 license.
 - Exclude Ubuntu-specific tools.
 - Fix some spec file issues per reviewers comments.
