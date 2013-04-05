@@ -1,7 +1,7 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	1%{?dist}
+Release:	2%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
 URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
@@ -13,7 +13,7 @@ BuildArch:	noarch
 
 %if 0%{?rhel}
 # Only build on x86_64 for EPEL because qemu-img only exists for that arch
-ExclusiveArch:	x86_64
+ExclusiveArch:	noarch x86_64
 %endif
 
 Requires:	gawk
@@ -66,6 +66,9 @@ cp man/* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 
 %changelog
+* Tue Apr  5 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-2
+- Yet another spec file fix to only build on x86_64 for EPEL.
+
 * Tue Apr  2 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-1
 - Update to upstream release 0.27.
 - Fix spec file to only build on x86_64 for EPEL.
