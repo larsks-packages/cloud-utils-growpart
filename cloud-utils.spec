@@ -1,7 +1,7 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	3%{?dist}
+Release:	4%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
 URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
@@ -16,8 +16,8 @@ BuildArch:	noarch
 ExcludeArch:	i386 ppc64
 %endif
 
+Requires:	cloud-utils-growpart
 Requires:	gawk
-Requires:	gdisk
 Requires:	e2fsprogs
 Requires:	euca2ools
 Requires:	file
@@ -36,6 +36,21 @@ filesystems, and uploading them to either EC2 or UEC.
 The tasks associated with image bundling are often tedious and repetitive. The
 cloud-utils package provides several scripts that wrap the complicated tasks
 with a much simpler interface.
+
+
+%package growpart
+Summary:	Script for growing a partition
+Group:		System Environment/Base
+
+Requires:	gawk
+Requires:	gdisk
+Requires:	util-linux
+
+
+%description growpart
+This package provides the growpart script for growing a partition. It is
+primarily used in cloud images in conjunction with the dracut-modules-growroot
+package to grow the root partition on first boot.
 
 
 %prep
@@ -61,11 +76,31 @@ cp man/* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 %files
 %doc ChangeLog LICENSE
-%{_bindir}/*
-%doc %{_mandir}/man1/*
+%{_bindir}/cloud-localds
+%{_bindir}/cloud-publish-tarball
+%{_bindir}/cloud-run-instances
+%{_bindir}/write-mime-multipart
+%{_bindir}/cloud-publish-image
+%{_bindir}/ec2metadata
+%{_bindir}/resize-part-image
+%doc %{_mandir}/man1/cloud-publish-image.*
+%doc %{_mandir}/man1/cloud-publish-tarball.*
+%doc %{_mandir}/man1/cloud-run-instances.*
+%doc %{_mandir}/man1/resize-part-image.*
+%doc %{_mandir}/man1/write-mime-multipart.*
+
+
+%files growpart
+%doc ChangeLog LICENSE
+%{_bindir}/growpart
+%doc %{_mandir}/man1/growpart.*
 
 
 %changelog
+* Mon Jun 17 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-4
+- Break out the growpart script into its own subpackage to prevent pulling a
+  boatload of unnecessary dependencies into a cloud image.
+
 * Mon Apr  8 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-3
 - 3rd attempt to fix the spec file to only build on x86_64 for EPEL.
 
