@@ -1,7 +1,7 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	4%{?dist}
+Release:	5%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
 URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
@@ -43,7 +43,10 @@ Summary:	Script for growing a partition
 Group:		System Environment/Base
 
 Requires:	gawk
-Requires:	gdisk
+# gdisk is only required for resizing GPT partitions and depends on libicu
+# (25MB). We don't make this a hard requirement to save some space in non-GPT
+# systems.
+#Requires:	gdisk
 Requires:	util-linux
 
 
@@ -97,6 +100,10 @@ cp man/* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 
 %changelog
+* Mon Jun 17 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-5
+- Don't make gdisk a hard requirement for cloud-utils-growpart to save some
+  space on systems that don't use GPT partitions.
+
 * Mon Jun 17 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-4
 - Break out the growpart script into its own subpackage to prevent pulling a
   boatload of unnecessary dependencies into a cloud image.
