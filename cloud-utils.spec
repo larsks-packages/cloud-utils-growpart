@@ -1,7 +1,7 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	5%{?dist}
+Release:	6%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
 URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
@@ -100,6 +100,9 @@ cp man/* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.27-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Mon Jun 17 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-5
 - Don't make gdisk a hard requirement for cloud-utils-growpart to save some
   space on systems that don't use GPT partitions.
