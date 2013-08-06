@@ -1,7 +1,7 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	5%{?dist}
+Release:	6%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
 URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
@@ -10,11 +10,6 @@ Source0:	%{name}-%{version}.tar.gz
 Source1:        LICENSE
 
 BuildArch:	noarch
-
-%if 0%{?rhel}
-# Exclude EPEL architectures that don't have qemu-img
-ExcludeArch:	i386 ppc64
-%endif
 
 Requires:	cloud-utils-growpart
 Requires:	gawk
@@ -56,6 +51,16 @@ primarily used in cloud images in conjunction with the dracut-modules-growroot
 package to grow the root partition on first boot.
 
 
+# Don't build the cloud-utils main package on EPEL architectures that don't
+# have qemu-img
+%define BuildMainPackage 1
+%if 0%{?rhel}
+%ifarch i386 ppc64
+%define BuildMainPackage 0
+%endif   # %ifarch i386 ppc64
+%endif   # %if 0%{?rhel}
+
+
 %prep
 %setup -q
 
@@ -66,17 +71,26 @@ package to grow the root partition on first boot.
 %install
 cp %{SOURCE1} LICENSE
 
-# Install binaries
+# Create the target directories
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
-cp bin/* $RPM_BUILD_ROOT/%{_bindir}/
-# Exclude Ubuntu-specific tools
-rm $RPM_BUILD_ROOT/%{_bindir}/*ubuntu*
-
-# Install man pages
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}/man1
+
+%if %{BuildMainPackage}
+# Install binaries and manpages
+cp bin/* $RPM_BUILD_ROOT/%{_bindir}/
 cp man/* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
+# Exclude Ubuntu-specific tools
+rm $RPM_BUILD_ROOT/%{_bindir}/*ubuntu*
+%endif   # %if %{BuildMainPackage}
 
+# Install the growpart binary and man page
+cp bin/growpart $RPM_BUILD_ROOT/%{_bindir}/
+cp man/growpart.* $RPM_BUILD_ROOT/%{_mandir}/man1/
+
+
+# Files for the main package
+%if %{BuildMainPackage}
 %files
 %doc ChangeLog LICENSE
 %{_bindir}/cloud-localds
@@ -91,8 +105,10 @@ cp man/* $RPM_BUILD_ROOT/%{_mandir}/man1/
 %doc %{_mandir}/man1/cloud-run-instances.*
 %doc %{_mandir}/man1/resize-part-image.*
 %doc %{_mandir}/man1/write-mime-multipart.*
+%endif   # %if %{BuildMainPackage}
 
 
+# Files for the growpart subpackage
 %files growpart
 %doc ChangeLog LICENSE
 %{_bindir}/growpart
@@ -100,6 +116,9 @@ cp man/* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 
 %changelog
+* Tue Aug  6 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-6
+- Build the growpart subpackage on all EPEL architectures [bz#986809].
+
 * Mon Jun 17 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-5
 - Don't make gdisk a hard requirement for cloud-utils-growpart to save some
   space on systems that don't use GPT partitions.
