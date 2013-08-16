@@ -1,7 +1,7 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	7%{?dist}
+Release:	8%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
 URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
@@ -9,7 +9,17 @@ URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.ta
 Source0:	%{name}-%{version}.tar.gz
 Source1:        LICENSE
 
+# Don't build the cloud-utils main package on EPEL architectures that don't
+# have qemu-img. Which means we need to make it a no-noarch package for EPEL
+# for this to work properly.
+%define BuildMainPackage 1
+%if 0%{?rhel}
+%ifarch i386 ppc64
+%define BuildMainPackage 0
+%endif   # %ifarch i386 ppc64
+%else   # %if 0%{?rhel}
 BuildArch:	noarch
+%endif   # %if 0%{?rhel}
 
 Requires:	cloud-utils-growpart
 Requires:	gawk
@@ -49,16 +59,6 @@ Requires:	util-linux
 This package provides the growpart script for growing a partition. It is
 primarily used in cloud images in conjunction with the dracut-modules-growroot
 package to grow the root partition on first boot.
-
-
-# Don't build the cloud-utils main package on EPEL architectures that don't
-# have qemu-img
-%define BuildMainPackage 1
-%if 0%{?rhel}
-%ifarch i386 ppc64
-%define BuildMainPackage 0
-%endif   # %ifarch i386 ppc64
-%endif   # %if 0%{?rhel}
 
 
 %prep
@@ -116,6 +116,10 @@ cp man/growpart.* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 
 %changelog
+* Fri Aug 16 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-8
+- Make the package a no-noarch package on EPEL so that the build of the main
+  package can be prevented for the arches that don't support it [bz#986809].
+
 * Tue Aug 06 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-7
 - Build the growpart subpackage on all EPEL architectures [bz#986809].
 
