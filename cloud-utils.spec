@@ -1,7 +1,7 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	8%{?dist}
+Release:	9%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
 URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
@@ -14,7 +14,9 @@ Source1:        LICENSE
 # for this to work properly.
 %define BuildMainPackage 1
 %if 0%{?rhel}
-%ifarch i386 ppc64
+# don't build debuginfo packages
+%global debug_package %{nil}
+%ifarch i686 ppc64
 %define BuildMainPackage 0
 %endif   # %ifarch i386 ppc64
 %else   # %if 0%{?rhel}
@@ -116,6 +118,10 @@ cp man/growpart.* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 
 %changelog
+* Fri Aug 16 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-9
+- Prevent building of debuginfo packages.
+- Fix 32-bit arch type.
+
 * Fri Aug 16 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-8
 - Make the package a no-noarch package on EPEL so that the build of the main
   package can be prevented for the arches that don't support it [bz#986809].
