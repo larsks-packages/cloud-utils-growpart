@@ -1,13 +1,14 @@
 Summary:	Cloud image management utilities
 Name:		cloud-utils
 Version:	0.27
-Release:	9%{?dist}
+Release:	10%{?dist}
 License:	GPLv3
 Group:		System Environment/Base
 URL:		https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz
 
 Source0:	%{name}-%{version}.tar.gz
-Source1:        LICENSE
+Source1:	LICENSE
+Patch0:		0001-supress-partx-usage-error.patch
 
 # Don't build the cloud-utils main package on EPEL architectures that don't
 # have qemu-img. Which means we need to make it a no-noarch package for EPEL
@@ -65,6 +66,7 @@ package to grow the root partition on first boot.
 
 %prep
 %setup -q
+%patch0 -p1
 
 
 %build
@@ -118,6 +120,9 @@ cp man/growpart.* $RPM_BUILD_ROOT/%{_mandir}/man1/
 
 
 %changelog
+* Fri Nov 22 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-10
+- [966574] growpart spits out a non-fatal error
+
 * Fri Aug 16 2013 Juerg Haefliger <juergh@gmail.com> - 0.27-9
 - Prevent building of debuginfo packages.
 - Fix 32-bit arch type.

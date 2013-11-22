@@ -1,0 +1,25 @@
+From e14d60d17e4447a92c5127e0a5cc3312e0215014 Mon Sep 17 00:00:00 2001
+From: Juerg Haefliger <juerg.haefliger@hp.com>
+Date: Fri, 22 Nov 2013 09:40:21 +0100
+Subject: [PATCH] supress partx usage error
+
+---
+ bin/growpart | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bin/growpart b/bin/growpart
+index 85c2d1f..595c40b 100755
+--- a/bin/growpart
++++ b/bin/growpart
+@@ -448,7 +448,7 @@ verify_ptupdate() {
+ 	fi
+ 
+ 	if command -v partx >/dev/null 2>&1; then
+-		partx --help | grep -q -- --update || {
++		partx --help 2>/dev/null | grep -q -- --update || {
+ 			reason="partx has no '--update' flag in usage."
+ 			found="off"
+ 		}
+-- 
+1.8.3.2
+
